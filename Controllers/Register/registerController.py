@@ -1,6 +1,5 @@
 import sys
 sys.path.append("..")
-from Service.Register.registerService import * 
 
 def allRegistrations():
     # This shold not be available to the public but to maybe the admins only
@@ -12,7 +11,7 @@ def registration(profile_id):
 
 def createRegistration(profile):
     #Call service for storing this data in database after sanitizing and parametizing
-    saveRegistration = createRegistrationDB(registrationData)
+    # createRegistrationDB(registrationData)
     return {}
 
 def updateRegistration(profile):

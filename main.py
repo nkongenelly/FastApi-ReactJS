@@ -1,42 +1,5 @@
-# from typing import Optional
-from fastapi import FastAPI
-from pydantic import BaseModel
-from Controllers.Profile.profileController import *
-from Controllers.Register.registerController import *
-
-app = FastAPI()
-
-class Profile(BaseModel):
-    username: str
-    firstname: str
-    lastname: None
-    email: str
-    password: str
+import uvicorn
 
 
-@app.get("/")
-def read_root():
-    return show()
-
-# Registration routes
-@app.get("/apis/registrations")
-def read_registrations():
-    return allRegistrations()
-
-@app.get("/apis/registration/{profile_id}")
-def read_registration():
-    return registration(profile_id)
-
-@app.post("/apis/registrations")
-def create_registration(profile:Profile):
-    return createRegistration(profile)
-
-@app.put("/apis/registrations/{profile_id}")
-def update_registration(profile_id, profile:Profile):
-    return updateRegistration(profile_id, profile)   
-
-@app.delete("/apis/registrations/{profile_id}")
-def delete_registration(profile_id, profile:Profile):
-    return deleteRegistration(profile_id, profile)   
-
-
+if __name__ == "__main__":
+    uvicorn.run("api:app", host="127.0.0.1", port=8000, reload=True)

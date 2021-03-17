@@ -1,10 +1,11 @@
 import sqlite3
 from pydantic import BaseModel
-conn = sqlite3.connect('profile.db')
+conn = sqlite3.connect('application.db')
 
 c = conn.cursor()
 # Profile Table
 c.execute("""CREATE TABLE IF NOT EXISTS profile (
+        profileId integer,
         username text,
         firstname text,
         lastname text,
@@ -13,7 +14,8 @@ c.execute("""CREATE TABLE IF NOT EXISTS profile (
 c.execute("""CREATE TABLE IF NOT EXISTS accounts (
         email text,
         password text,
-        status text)""")
+        status text,
+        profile_id integer)""")
 
 
 # class Profile(BaseModel):
@@ -29,13 +31,20 @@ def createRegistrationDB(registrationData):
     c.execute("SELECT COUNT(email) FROM profile WHERE email=:email", {"email": registrationData['email']})
     profileRecods = c.fetchall()
     print(profileRecods)
+
+    # Get length of all records and add one to get the auto increament profileid
+    profileLength = c.execute("SELECT COUNT(email) FROM profile").fetchone()
+    print(profileLength)
+    print(profileLength[0])
+    # print(Object.freeze(profileLength))
+    profileId = profileLength[0] + 1
     # If record does not exist , create a new profile, otherwise show error account already exists
     if profileRecods == [(0,)]:
         with conn:
-            c.execute("INSERT INTO profile VALUES (:username, :firstname, :lastname, :email, :password)",
-                    {'username': registrationData['username'], 'firstname': registrationData['firstname'], 'lastname': registrationData['lastname'],'email':registrationData['email'], 'password':registrationData['password']})
-            c.execute("INSERT INTO profile VALUES (:email, :password, :status)",
-                    {'email':registrationData['email'], 'password':registrationData['password'], "status": "Active"})
+            c.execute("INSERT INTO profile VALUES (:profileId, :username, :firstname, :lastname, :email)",
+                    {'profileId': profileId, 'username': registrationData['username'], 'firstname': registrationData['firstname'], 'lastname': registrationData['lastname'],'email':registrationData['email']})
+            c.execute("INSERT INTO accounts VALUES (:email, :password, :status, :profile_id)",
+                    {'email':registrationData['email'], 'password':registrationData['password'], "status": "Active", 'profile_id': profileId})
             print("new account created")
             return
     else:
@@ -46,26 +55,40 @@ def showAllRegistrations():
     c.execute("SELECT * FROM profile")
     profiles = c.fetchall()
     print(profiles)
-    print(profiles[0][0])
+    # print(profiles[0])
     return
 
 def updateRegistrationDB(profileID, registrationData):
     # Sanitize and update registration data as profile (parametize the inputs to DB)
-    return {}
+    with conn:
+        c.execute("UPDATE profile SET username=:username, firstname=:firstname, lastname=:lastname, email=:email WHERE profileId=:profileId",
+        {'username':registrationData['username'], 'firstname': registrationData['firstname'], 'lastname': registrationData['lastname'], 'email':registrationData['email'], "profileId": profileID})
+    return
 
-def deleteRegistrationDB(profileID, registrationData):
+def deleteRegistrationDB(profileID):
     # Sanitize and update registration data as profile (parametize the inputs to DB)
-    return {}
+    with conn:
+        c.execute("DELETE FROM profile WHERE profileId=:profileId",{'profileId':profileID})
+        c.execute("UPDATE accounts SET status=:status WHERE profile_id=:profileId",{'status':'inactive','profileId':profileID})
+    return
 
-
+#
 # registrationData = {
-#     "username": "JohnDoe",
+#     "username": "JohnDoe1",
 #     "firstname": "Jane",
 #     "lastname": "Doe",
 #     "email": "janedoe@example.com",
 #     "password": "janedoejanedoestr"}
-
+# registrationData1 = {
+#     "username": "Jane",
+#     "firstname": "Jane",
+#     "lastname": "Jane",
+#     "email": "janedoe@example.com",
+#     "password": "janedoejanedoestr"}
+#
 # createRegistrationDB(registrationData)
 # showAllRegistrations()
+# updateRegistrationDB("1", registrationData1)
+# deleteRegistrationDB("1")
 
 conn.close()

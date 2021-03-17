@@ -61,7 +61,7 @@ def update_registration(profile_id, profile:Profile):
     return updateRegistration(profile_id, profile)   
 
 @app.delete("/apis/registrations/{profile_id}")
-def delete_registration(profile_id, profile:Profile):
-    return deleteRegistration(profile_id, profile)   
+def delete_registration(profile_id):
+    return deleteRegistration(profile_id)   
 
 

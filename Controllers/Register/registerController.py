@@ -19,7 +19,7 @@ def updateRegistration(profileID, registrationData):
     updateRegistration = updateRegistrationDB(profileID, registrationData)
     return {}
 
-def deleteRegistration(profileID, registrationData):
+def deleteRegistration(profileID):
     #Call service for deleting this data in database 
-    deleteRegistration = deleteRegistrationDB(profileID, registrationData)
+    deleteRegistration = deleteRegistrationDB(profileID)
     return {}

@@ -3,7 +3,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from Controllers.Profile.profileController import *
 from Controllers.Register.registerController import *
-from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.cors import CORSMiddleware
+# from fastapi.middleware.cors import CORSMiddleware
 from Service.Register.registerService import *
 
 
@@ -12,8 +13,11 @@ app = FastAPI()
 origins = [
     "http://localhost:3000/register",
     "http://localhost:3000",
+    "http://localhost:3000/",
     "http://127.0.0.1:3000/*",
     "http://localhost:3000/*",
+    "http://localhost:*",
+    "http://127.0.0.1:8000",
 ]
 
 
@@ -45,7 +49,7 @@ def read_registrations():
     return showAllRegistrations()
 
 @app.get("/apis/registration/{profile_id}")
-def read_registration():
+def read_registration(profile_id):
     return registration(profile_id)
 
 @app.post("/apis/registrations")

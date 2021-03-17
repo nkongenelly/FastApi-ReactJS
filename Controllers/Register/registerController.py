@@ -14,12 +14,12 @@ def createRegistration(profile):
     # createRegistrationDB(registrationData)
     return {}
 
-def updateRegistration(profile):
+def updateRegistration(profileID, registrationData):
     #Call service for updating this data in database after sanitizing and parametizing
     updateRegistration = updateRegistrationDB(profileID, registrationData)
     return {}
 
-def deleteRegistration(profile):
+def deleteRegistration(profileID, registrationData):
     #Call service for deleting this data in database 
     deleteRegistration = deleteRegistrationDB(profileID, registrationData)
     return {}
